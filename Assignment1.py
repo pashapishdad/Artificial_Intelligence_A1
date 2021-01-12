@@ -26,4 +26,3 @@ if __name__ == "__main__":
         # check to see if the user want to exit or continue
         running = input("Press 'Y' or 'y' to continue, press any other key to exit: \n")
         run = running.upper() == 'Y'
-

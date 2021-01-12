@@ -258,11 +258,35 @@ def solve():
     for i in range(len(shortestpath)):
         if i + 1 >= len(shortestpath):
             break
-        pt = Line(Point(shortestpath[i][0], shortestpath[i][1]), Point(shortestpath[i+1][0], shortestpath[i+1][1]))
-        pt.setFill("green")
-        pt.setWidth(3)
-        pt.draw(win)
+        # cir = Circle(Point(shortestpath[i][0], shortestpath[i][1]), 0.1)
+        # cir.setWidth(3)
+        # cir.setFill("green")
+        # if not i:
+        #     cir.draw(win)
+        line = Line(Point(shortestpath[i][0], shortestpath[i][1]), Point(shortestpath[i+1][0], shortestpath[i+1][1]))
+        if i == 0:
+            size = 0.15
+        elif i < len(shortestpath) - 2:
+            size = 0.2
+        elif i == len(shortestpath) - 2:
+            # drawing the last point
+            cir_final = Circle(Point(shortestpath[i + 1][0], shortestpath[i + 1][1]), 0.3)
+            # to just fill the circles with color without border
+            cir_final.setWidth(0)
+            cir_final.setFill("red")
+        cir = Circle(Point(shortestpath[i][0], shortestpath[i][1]), size)
+        # to just fill the circles with color without border
+        cir.setWidth(0)
+        cir.setFill("red")
+        line.setFill("black")
+        line.setWidth(3)
+        line.draw(win)
+        cir.draw(win)
+        if i == len(shortestpath) - 2:
+            cir_final.draw(win)
 
+
+    # to close byclicking on the map after showing the solution path
     t3 = win.getMouse()
 
     win.close()
