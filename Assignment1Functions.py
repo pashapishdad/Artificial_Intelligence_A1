@@ -258,19 +258,17 @@ def solve():
     for i in range(len(shortestpath)):
         if i + 1 >= len(shortestpath):
             break
-        # cir = Circle(Point(shortestpath[i][0], shortestpath[i][1]), 0.1)
-        # cir.setWidth(3)
-        # cir.setFill("green")
-        # if not i:
-        #     cir.draw(win)
         line = Line(Point(shortestpath[i][0], shortestpath[i][1]), Point(shortestpath[i+1][0], shortestpath[i+1][1]))
         if i == 0:
-            size = 0.15
+            size = 3 / n_cells
+            # size = 0.15
         elif i < len(shortestpath) - 2:
-            size = 0.2
+            size = 4 / n_cells
+            # size = 0.2
         elif i == len(shortestpath) - 2:
             # drawing the last point
-            cir_final = Circle(Point(shortestpath[i + 1][0], shortestpath[i + 1][1]), 0.3)
+            size_f = 6 / n_cells
+            cir_final = Circle(Point(shortestpath[i + 1][0], shortestpath[i + 1][1]), size_f)
             # to just fill the circles with color without border
             cir_final.setWidth(0)
             cir_final.setFill("red")
