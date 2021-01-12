@@ -139,7 +139,25 @@ def main():
     point = Text(Point(10, 20.5), t)
     point.setFill("white")
     point.draw(win)
+
     t2 = win.getMouse()
+    point2 = Text(Point(10, 20.5), t2)
+    point.setFill("black")
+    point2.setFill("white")
+    point2.draw(win)
+    searchpath = search_path(math.floor(t.x), math.floor(t.y), math.floor(t2.x), math.floor(t2.y))
+    shortestpath = shortest_path(searchpath)
+    print(shortestpath)
+    for i in range(len(shortestpath)):
+        if i + 1 >= len(shortestpath):
+            break
+        # print(pt)
+        pt = Line(Point(shortestpath[i][0], shortestpath[i][1]), Point(shortestpath[i + 1][0], shortestpath[i + 1][1]))
+        pt.setFill("green")
+        pt.setWidth(3)
+        pt.draw(win)
+
+    t3 = win.getMouse()
     print()
 
     """
@@ -186,6 +204,27 @@ def a_star(x, y, x2, y2):
     answer = False
     while oList != [] or answer == False:
         print()
+
+
+def shortest_path(closed_list):
+    s_path = [closed_list[-1][:2]]
+    source = closed_list.pop(0)[:2]
+    last_point = closed_list.pop(-1)
+    t_sorted = sorted(closed_list, key=lambda l: l[2])
+    i = 0
+    while last_point[-2:] != source:
+        current_point = t_sorted[i]
+        if last_point[-2:] == current_point[:2]:
+            # t_sorted.pop(i)
+            i = 0
+            s_path.append(last_point[-2:])
+            print(last_point)
+            last_point = current_point
+        else:
+            i += 1
+    s_path.append(source[:2])
+    s_path.reverse()
+    return s_path
 
 
 if __name__ == "__main__":
@@ -278,26 +317,14 @@ if __name__ == "__main__":
     print(y)
 
     # comment for now(get input from the map)
-    # main()
+    main()
 
     print(heuristic(1, 1, 1, 6))
 
     result = search_path(10, 2, 14, 4)
     print(result)
 
-    source = result.pop(0)[:2]
-    last_point = result.pop(-1)
-    t_sorted = sorted(result, key=lambda l: l[2])
-    i = 0
-    while last_point[-2:] != source:
-        current_point = t_sorted[i]
-        if last_point[-2:] == current_point[:2]:
-            #            t_sorted.pop(i)
-            i = 0
-            print(last_point)
-            last_point = current_point
-        else:
-            i += 1
+    print(shortest_path(result))
 
     """
     open_list = [[1, 1, 0, heuristic(1, 1, 3, 3)]]
