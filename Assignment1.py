@@ -27,67 +27,66 @@ def heuristic2(x, y, x2, y2):
 def graph(x, y, c=0):
     g = []
     # north direction
-    if draw[y, x - 1] == 0 and draw[y, x] == 0 and c_f_n[x, y + 1, 0] > c + 1:
-        # if c_f_n[x, y+1, 0] > c+1:
+    if 19 > x > 0 and y < 19 and draw[y, x - 1] == 0 and draw[y, x] == 0 and c_f_n[x, y + 1, 0] > c + 1:
         c_f_n[x, y + 1] = [c + 1, heuristic2(x, y + 1, x2, y2) + c + 1, x, y]
         n = [x, y + 1, c + 1, heuristic2(x, y + 1, x2, y2) + c + 1, x, y]
         g.append(n)
-        # g[x, y+1] = [c+1, heuristic2(x, y + 1, x2, y2) + c+1, x, y]
-
-        # n = [x, y + 1, heuristic2(x, y + 1, x2, y2) + c + 1, x, y]
-        # g.append(n)
-    elif ((draw[y, x - 1] == 1 and draw[y, x] == 0) or (draw[y, x - 1] == 0 and draw[y, x] == 1)) and c_f_n[x, y + 1][
+    elif 19 > x > 0 and y < 19 and (
+            (draw[y, x - 1] == 1 and draw[y, x] == 0) or (draw[y, x - 1] == 0 and draw[y, x] == 1)) and c_f_n[x, y + 1][
         0] > c + 1.3:
         c_f_n[x, y + 1] = [c + 1.3, heuristic2(x, y + 1, x2, y2) + c + 1.3, x, y]
         n = [x, y + 1, c + 1.3, heuristic2(x, y + 1, x2, y2) + c + 1.3, x, y]
         g.append(n)
     # north east direction
-    if draw[y, x] == 0 and c_f_n[x + 1, y + 1][0] > c + 1.5:
+    if y < 19 and x < 19 and draw[y, x] == 0 and c_f_n[x + 1, y + 1][0] > c + 1.5:
         c_f_n[x + 1, y + 1] = [c + 1.5, heuristic2(x + 1, y + 1, x2, y2) + c + 1.5, x, y]
         ne = [x + 1, y + 1, c + 1.5, heuristic2(x + 1, y + 1, x2, y2) + c + 1.5, x, y]
         g.append(ne)
     # east direction
-    if draw[y, x] == 0 and draw[y - 1, x] == 0 and c_f_n[x + 1, y][0] > c + 1:
+    if 0 < y <= 19 and x < 19 and draw[y, x] == 0 and draw[y - 1, x] == 0 and c_f_n[x + 1, y][0] > c + 1:
         c_f_n[x + 1, y] = [c + 1, heuristic2(x + 1, y, x2, y2) + c + 1, x, y]
         e = [x + 1, y, c + 1, heuristic2(x + 1, y, x2, y2) + c + 1, x, y]
         g.append(e)
-    elif ((draw[y, x] == 1 and draw[y - 1, x] == 0) or (draw[y, x] == 0 and draw[y - 1, x] == 1)) and c_f_n[x + 1, y][
+    elif 0 < y <= 19 and x < 19 and (
+            (draw[y, x] == 1 and draw[y - 1, x] == 0) or (draw[y, x] == 0 and draw[y - 1, x] == 1)) and c_f_n[x + 1, y][
         0] > c + 1.3:
         c_f_n[x + 1, y] = [c + 1.3, heuristic2(x + 1, y, x2, y2) + c + 1.3, x, y]
         e = [x + 1, y, c + 1.3, heuristic2(x + 1, y, x2, y2) + c + 1.3, x, y]
         g.append(e)
     # south east direction
-    if draw[y - 1, x] == 0 and c_f_n[x + 1, y - 1][0] > c + 1.5:
+    if x < 19 and y > 0 and draw[y - 1, x] == 0 and c_f_n[x + 1, y - 1][0] > c + 1.5:
         c_f_n[x + 1, y - 1] = [c + 1.5, heuristic2(x + 1, y - 1, x2, y2) + c + 1.5, x, y]
         se = [x + 1, y - 1, c + 1.5, heuristic2(x + 1, y - 1, x2, y2) + c + 1.5, x, y]
         g.append(se)
     # south direction
-    if draw[y - 1, x - 1] == 0 and draw[y - 1, x] == 0 and c_f_n[x, y - 1][0] > c + 1:
+    if 0 < x < 19 and y > 0 and draw[y - 1, x - 1] == 0 and draw[y - 1, x] == 0 and c_f_n[x, y - 1][0] > c + 1:
         c_f_n[x, y - 1] = [c + 1, heuristic2(x, y - 1, x2, y2) + c + 1, x, y]
         s = [x, y - 1, c + 1, heuristic2(x, y - 1, x2, y2) + c + 1, x, y]
         g.append(s)
-    elif ((draw[y - 1, x - 1] == 1 and draw[y - 1, x] == 0) or (draw[y - 1, x - 1] == 0 and draw[y - 1, x] == 1)) and \
+    elif 0 < x < 19 and y > 0 and (
+            (draw[y - 1, x - 1] == 1 and draw[y - 1, x] == 0) or (draw[y - 1, x - 1] == 0 and draw[y - 1, x] == 1)) and \
             c_f_n[x, y - 1][0] > c + 1.3:
         c_f_n[x, y - 1] = [c + 1.3, heuristic2(x, y - 1, x2, y2) + c + 1.3, x, y]
         s = [x, y - 1, c + 1.3, heuristic2(x, y - 1, x2, y2) + c + 1.3, x, y]
         g.append(s)
     # south west direction
-    if draw[y - 1, x - 1] == 0 and c_f_n[x - 1, y - 1][0] > c + 1.5:
+    if x > 0 and y > 0 and draw[y - 1, x - 1] == 0 and c_f_n[x - 1, y - 1][0] > c + 1.5:
         c_f_n[x - 1, y - 1] = [c + 1.5, heuristic2(x - 1, y - 1, x2, y2) + c + 1.5, x, y]
         sw = [x - 1, y - 1, c + 1.5, heuristic2(x - 1, y - 1, x2, y2) + c + 1.5, x, y]
         g.append(sw)
     # west direction
-    if draw[y - 1, x - 1] == 0 and draw[y, x - 1] == 0 and c_f_n[x - 1, y][0] > c + 1:
+    if 0 < y < 19 and x > 0 and draw[y - 1, x - 1] == 0 and draw[y, x - 1] == 0 and c_f_n[x - 1, y][0] > c + 1:
         c_f_n[x - 1, y] = [c + 1, heuristic2(x - 1, y, x2, y2) + c + 1, x, y]
         w = [x - 1, y, c + 1, heuristic2(x - 1, y, x2, y2) + c + 1, x, y]
         g.append(w)
-    elif ((draw[y - 1, x - 1] == 1 and draw[y, x - 1] == 0) or (draw[y - 1, x - 1] == 0 and draw[y, x - 1] == 1)) and \
+    elif 0 < y < 19 and x > 0 and (
+            (draw[y - 1, x - 1] == 1 and draw[y, x - 1] == 0) or (draw[y - 1, x - 1] == 0 and draw[y, x - 1] == 1)) and \
             c_f_n[x - 1, y][0] > c + 1:
         c_f_n[x - 1, y] = [c + 1.3, heuristic2(x - 1, y, x2, y2) + c + 1.3, x, y]
         w = [x - 1, y, c + 1.3, heuristic2(x - 1, y, x2, y2) + c + 1.3, x, y]
         g.append(w)
     # north west
-    if draw[y, x - 1] == 0 and c_f_n[x - 1, y + 1][0] > c + 1.5:
+    if x > 0 and y < 19 and draw[y, x - 1] == 0 and c_f_n[x - 1, y + 1][0] > c + 1.5:
         c_f_n[x - 1, y + 1] = [c + 1.5, heuristic2(x - 1, y + 1, x2, y2) + c + 1.5, x, y]
         nw = [x - 1, y + 1, c + 1.5, heuristic2(x - 1, y + 1, x2, y2) + c + 1.5, x, y]
         g.append(nw)
