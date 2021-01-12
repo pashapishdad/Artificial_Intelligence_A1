@@ -1,3 +1,9 @@
+# written by Pasha Pishdad
+# Student ID: 40042599
+# Assignment 1
+
+# Functions
+
 import math
 import shapefile as sf
 import numpy as np
@@ -27,6 +33,7 @@ def number_crimes(file_name):
     global n_cells
     n_cells = 0.04 / grid_size
     n_cells = int(n_cells)
+    # an array to store all nodes to use it to update it with the new node if it has lower cost
     global c_f_n
     c_f_n = np.zeros((n_cells + 1, n_cells + 1, 4))
     c_f_n[:, :, 0] = 1000
@@ -38,8 +45,8 @@ def number_crimes(file_name):
         for i in range(len(shr)):
             x.append(shr[i].shape.__geo_interface__["coordinates"][0])
             y.append(shr[i].shape.__geo_interface__["coordinates"][1])
-    # change the coordinates to be from 0 to 19 to make it easier to manage
-    # create an array to store number of points in each cell
+    # change the coordinates to be from 0 to number of cells to make it easier to manage
+    # create an array to store the number of points in each cell
     for i in range(len(x)):
         rows = math.floor((x[i] + 73.590) / grid_size)
         columns = math.floor((y[i] - 45.490) / grid_size)
@@ -78,12 +85,12 @@ def number_crimes_to_draw(number_crimes):
     return draw_numbers
 
 
-# function cost_edge()
+# find the estimation of cost from a node to the end node.
 def heuristic(x, y, x2, y2):
     dist = math.sqrt(((x - x2) ** 2) + ((y - y2) ** 2))
     return dist
 
-
+# find all the possible direction of each node with the updated cost, original point, and f(n) which is the actual cost plus the heuristic function.
 def graph(x, y, c=0, x2=0, y2=0):
     g = []
     # north direction
@@ -145,7 +152,7 @@ def graph(x, y, c=0, x2=0, y2=0):
 
     return g
 
-
+# find the search path by putting next expandable nodes in the open list and visited nodes in the closed list.
 def search_path(x1, y1, x2, y2):
     open_list = [[x1, y1, 0, heuristic(x1, y1, x2, y2)]]
     closed_list = []
@@ -158,11 +165,13 @@ def search_path(x1, y1, x2, y2):
         if duration > 10:
             return closed_list, True, duration
         t = open_list.pop(0)
+        # check if it finds the end node
         if t[0] == x2 and t[1] == y2:
             answer = True
             closed_list.append(t)
             return closed_list, False, duration
         nodes = graph(t[0], t[1], t[2], x2, y2)
+        # if the nodes which is the available nodes to explore is not empty, it will add it to the open list
         if nodes:
             open_list.extend(nodes)
             open_list = sorted(open_list, key=lambda l: l[3])
@@ -173,13 +182,37 @@ def search_path(x1, y1, x2, y2):
     return closed_list, len(open_list) == 0, duration
 
 
-def main():
+# this fuction will use the closed list and backtrack to find the optimal path by finding the next node that has minimum actual cost.
+def shortest_path(closed_list):
+    s_path = [closed_list[-1][:2]]
+    source = closed_list.pop(0)[:2]
+    last_point = closed_list.pop(-1)
+    total_cost = last_point[2]
+    t_sorted = sorted(closed_list, key=lambda l: l[2])
+    i = 0
+    while last_point[-2:] != source:
+        current_point = t_sorted[i]
+        if last_point[-2:] == current_point[:2]:
+            t_sorted.pop(i)
+            i = 0
+            s_path.append(last_point[-2:])
+            last_point = current_point
+        else:
+            i += 1
+    s_path.append(source[:2])
+    s_path.reverse()
+    return s_path, total_cost
+
+
+# this function will draw the grid and the final path
+def solve():
     draw_numbers = number_crimes_to_draw(n_crimes)
     t_g = "Threshold = %.2f\tGrid size = %.3f" %(threshold, grid_size)
     win = GraphWin(t_g, 500, 500, autoflush=False)
     win.setCoords(0.0, 0.0, n_cells, n_cells)
     win.setBackground("black")
 
+    # filling the cells with color and number
     for i in range(n_cells):
         for j in range(n_cells):
             if draw[i, j]:
@@ -194,30 +227,34 @@ def main():
                 square.draw(win)
                 text = Text(Point(j + 0.5, i + 0.5), draw_numbers[i, j])
                 text.draw(win)
-    t = win.getMouse()
-    point = Text(Point(10, n_cells+0.5), t)
-    point.setFill("white")
-    point.draw(win)
 
-    t2 = win.getMouse()
-    point2 = Text(Point(10, n_cells+0.5), t2)
-    point.setFill("black")
-    point2.setFill("white")
-    point2.draw(win)
+    # getting the point from the user by clicking on the map
+    p1 = win.getMouse()
+    p2 = win.getMouse()
 
+    # finding the search path by calling the search_path function
+    searchpath, invalid_flag, duration = search_path(math.floor(p1.x), math.floor(p1.y), math.floor(p2.x), math.floor(p2.y))
 
-    searchpath, invalid_flag, duration = search_path(math.floor(t.x), math.floor(t.y), math.floor(t2.x), math.floor(t2.y))
+    # displaying proper message
     if duration > 10:
         print("Time is up. The optimal path is not found.")
         return
     if invalid_flag:
-        print("Due to blocks, no path is found.\n")
+        print("Due to blocks, no path is found. Please change the map and try again.\n")
         return
-    shortestpath = shortest_path(searchpath)
+
+    # finding the solution path by calling the shortest_path function
+    shortestpath, total_cost = shortest_path(searchpath)
 
     print("It took %.8f seconds to calculate the path.\n" % duration)
 
-    print("This is the path", shortestpath)
+    p1x, p1y, p2x, p2y = math.floor(p1.x), math.floor(p1.y), math.floor(p2.x), math.floor(p2.y)
+    point1x, point1y, point2x, point2y = (p1x * grid_size) - 73.590, (p1y * grid_size) + 45.490, (p2x * grid_size) - 73.590, (p2y * grid_size) + 45.490
+    print("starting point x: %.3f y: %.3f -- or -- x: %.3f y: %.3f\n\nend point x: %.3f y: %.3f -- or -- x: %.3f y: %.3f\n" % (point1x, point1y, p1x, p1y, point2x, point2y, p2x, p2y))
+    print("Total cost for this path is: %.1f\n" % total_cost)
+    print("This is the path: \n", shortestpath)
+
+    # drawing the solution path on the map
     for i in range(len(shortestpath)):
         if i + 1 >= len(shortestpath):
             break
@@ -226,29 +263,6 @@ def main():
         pt.setWidth(3)
         pt.draw(win)
 
-
     t3 = win.getMouse()
 
     win.close()
-
-
-def shortest_path(closed_list):
-    s_path = [closed_list[-1][:2]]
-    source = closed_list.pop(0)[:2]
-    last_point = closed_list.pop(-1)
-    t_sorted = sorted(closed_list, key=lambda l: l[2])
-    i = 0
-    while last_point[-2:] != source:
-        current_point = t_sorted[i]
-        if last_point[-2:] == current_point[:2]:
-            t_sorted.pop(i)
-            i = 0
-            s_path.append(last_point[-2:])
-            last_point = current_point
-        else:
-            i += 1
-    s_path.append(source[:2])
-    s_path.reverse()
-    return s_path
-
-
