@@ -24,10 +24,12 @@ test = np.zeros((20,20), dtype=bytearray)
 test[0,0]=[2,1]
 print("test", test[0,0][1])
 
-c_f_n = np.zeros((20, 20), dtype=bytearray)
-for i in range(20):
-    for j in range(20):
-        c_f_n[i,j] = [1000,0,0,0]
+c_f_n = np.zeros((20, 20, 4))
+# for i in range(20):
+#     for j in range(20):
+#         c_f_n[i,j,:] = np.array([1000,0,0,0])
+
+c_f_n[:,:,0] = 1000
 
 #r, c = 20, 20;
 #nCrimes = [[0 for x in range(r)] for y in range(c)]
@@ -113,8 +115,8 @@ print("cfn", c_f_n[1,1])
 def graph(x, y, c=0):
     g = []
     # north direction
-    if draw[y, x-1] == 0 and draw[y, x] == 0 and c_f_n[x, y+1][0] > c+1:
-        #if c_f_n[x, y+1][0] > c+1:
+    if draw[y, x-1] == 0 and draw[y, x] == 0 and c_f_n[x, y+1, 0] > c+1:
+        #if c_f_n[x, y+1, 0] > c+1:
         c_f_n[x, y+1] = [c+1, heuristic2(x, y + 1, x2, y2) + c + 1, x, y]
         n = [x, y+1, c+1, heuristic2(x, y + 1, x2, y2) + c + 1, x, y]
         g.append(n)
